@@ -39,7 +39,7 @@ BuildRequires:  jakarta-commons-cli, xalan-j2, jpackage-utils >= 0:1.5
 # xerces-j2 because tests fail with gnujaxp...
 BuildRequires:  jakarta-commons-logging, jakarta-commons-collections, xerces-j2
 BuildRequires:  antlr-javadoc, xml-commons-apis-javadoc
-BuildRequires:  jakarta-commons-beanutils-javadoc, ant-javadoc, /usr/bin/perl
+BuildRequires:  jakarta-commons-beanutils-javadoc, ant-javadoc, perl-base
 BuildRequires:  java-devel
 BuildRequires:  java-javadoc
 BuildRequires:  avalon-logkit 
