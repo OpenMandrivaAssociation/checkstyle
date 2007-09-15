@@ -6,7 +6,7 @@
 
 Name:           checkstyle
 Version:        4.3
-Release:        %mkrel 2
+Release:        %mkrel 3
 Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
@@ -47,8 +47,6 @@ BuildRequires:  jdom
 BuildRequires:  velocity
 BuildRequires:  werken.xpath
 %if %{gcj_support}
-Requires(post): java-gcj-compat
-Requires(postun): java-gcj-compat
 BuildRequires:  java-gcj-compat-devel
 %else
 BuildArch:      noarch
