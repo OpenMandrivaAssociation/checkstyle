@@ -6,22 +6,20 @@
 
 Name:           checkstyle
 Version:        4.3
-Release:        %mkrel 3
+Release:        %mkrel 4
 Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
 Group:          Development/Java
-#Vendor:        JPackage Project
-#Distribution:  JPackage
+URL:            http://checkstyle.sourceforge.net/
 Source0:        http://easynews.dl.sourceforge.net/checkstyle/checkstyle-src-%{version}%{beta}.tar.gz
 Source1:        %{name}-script
 Source2:        %{name}.catalog
-Patch0:                %{name}-build.patch
+Patch0:         %{name}-build.patch
 Patch1:         %{name}-javadoc-crosslink.patch
 Patch2:         %{name}-build-free.patch
 Patch3:         %{name}-exclude-smap.patch
 Patch4:         %{name}-gjdoc.patch
-URL:            http://checkstyle.sourceforge.net/
 Requires:       ant >= 0:1.6
 Requires:       antlr >= 0:2.7.1, jakarta-commons-logging
 Requires:       jakarta-commons-cli, jakarta-commons-beanutils
@@ -34,11 +32,11 @@ BuildRequires:  ant-junit >= 0:1.6
 BuildRequires:  emma
 %endif
 BuildRequires:  junit, antlr >= 0:2.7.1
-BuildRequires:  jakarta-commons-beanutils
+BuildRequires:  jakarta-commons-beanutils, jakarta-commons-lang
 BuildRequires:  jakarta-commons-cli, xalan-j2, jpackage-utils >= 0:1.5
 # xerces-j2 because tests fail with gnujaxp...
 BuildRequires:  jakarta-commons-logging, jakarta-commons-collections, xerces-j2
-BuildRequires:  antlr-javadoc, xml-commons-apis-javadoc
+BuildRequires:  antlr-javadoc, xml-commons-jaxp-1.3-apis-javadoc
 BuildRequires:  jakarta-commons-beanutils-javadoc, ant-javadoc, perl-base
 BuildRequires:  java-devel
 BuildRequires:  java-javadoc
@@ -133,7 +131,7 @@ OPT_JAR_LIST="$OPT_JAR_LIST ant/ant-junit"
 export OPT_JAR_LIST
 export CLASSPATH=$(build-classpath antlr commons-beanutils \
 commons-collections commons-cli commons-logging jdom junit velocity \
-werken.xpath xalan-j2 xerces-j2 avalon-logkit)
+werken.xpath xalan-j2 xerces-j2 avalon-logkit commons-lang)
 
 %{ant} \
   -Dbuild.sysclasspath=first \
