@@ -6,7 +6,7 @@
 
 Name:           checkstyle
 Version:        4.3
-Release:        %mkrel 4
+Release:        %mkrel 5
 Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
@@ -33,7 +33,7 @@ BuildRequires:  emma
 %endif
 BuildRequires:  junit, antlr >= 0:2.7.1
 BuildRequires:  jakarta-commons-beanutils, jakarta-commons-lang
-BuildRequires:  jakarta-commons-cli, xalan-j2, jpackage-utils >= 0:1.5
+BuildRequires:  jakarta-commons-cli, xalan-j2, java-rpmbuild >= 0:1.5
 # xerces-j2 because tests fail with gnujaxp...
 BuildRequires:  jakarta-commons-logging, jakarta-commons-collections, xerces-j2
 BuildRequires:  antlr-javadoc, xml-commons-jaxp-1.3-apis-javadoc
