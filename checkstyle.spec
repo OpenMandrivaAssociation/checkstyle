@@ -1,25 +1,23 @@
 %define gcj_support 1
-%define section        free
+%define section free
 %define build_free 1
 %define build_tests 0
-%define beta %{nil}
 
 Name:           checkstyle
-Version:        4.3
-Release:        %mkrel 5
+Version:        4.4
+Release:        %mkrel 0.0.1
 Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
 Group:          Development/Java
 URL:            http://checkstyle.sourceforge.net/
-Source0:        http://easynews.dl.sourceforge.net/checkstyle/checkstyle-src-%{version}%{beta}.tar.gz
+Source0:        http://downloads.sourceforge.net/checkstyle/checkstyle-src-%{version}.tar.gz
 Source1:        %{name}-script
 Source2:        %{name}.catalog
 Patch0:         %{name}-build.patch
 Patch1:         %{name}-javadoc-crosslink.patch
 Patch2:         %{name}-build-free.patch
 Patch3:         %{name}-exclude-smap.patch
-Patch4:         %{name}-gjdoc.patch
 Requires:       ant >= 0:1.6
 Requires:       antlr >= 0:2.7.1, jakarta-commons-logging
 Requires:       jakarta-commons-cli, jakarta-commons-beanutils
@@ -105,18 +103,23 @@ Requires:       %{name} = %{epoch}:%{version}
 Optional functionality for %{name}.
 
 %prep
-%setup -q -n %{name}-src-%{version}%{beta}
+%setup -q -n %{name}-src-%{version}
 %patch0 -p1 -b .build
 %patch1 -p1 -b .javadoc
 %if %{build_free}
 %patch2 -p1 -b .free
 %endif
 %patch3 -p1 -b .smap
-%patch4 -p1 -b .gjdoc
-%{__perl} -pi -e 's|\./{\@docRoot}/\.\./index\.html|%{_docdir}/%{name}-manual-%{version}/index.html|' build.xml
+
+%{__perl} -pi -e 's|\./{\@docRoot}/\.\./index\.html|file://%{_docdir}/%{name}-manual-%{version}/index.html|' build.xml
 %{__perl} -pi -e 's|.*classpathref="javadoc\.classpath".*\n||g;' build.xml
+
 # remove all binary libs
 %{_bindir}/find . -name '*.jar' | %{_bindir}/xargs -t %{__rm}
+
+# fix end-of-line
+%{__perl} -pi -e 's/\r$//g' LICENSE LICENSE.apache LICENSE.apache20 \
+README RIGHTS.antlr *.header *.xml
 
 %if %{build_free}
 %{__rm} -rf src/checkstyle/com/puppycrawl/tools/checkstyle/doclets
@@ -179,9 +182,9 @@ werken.xpath xalan-j2 xerces-j2 avalon-logkit commons-lang)
 
 # jar
 %{__mkdir_p} %{buildroot}%{_javadir}
-%{__cp} -a target/dist/%{name}-%{version}%{beta}/%{name}-%{version}%{beta}.jar \
+%{__cp} -a target/dist/%{name}-%{version}/%{name}-%{version}.jar \
   %{buildroot}%{_javadir}/%{name}-%{version}.jar
-%{__cp} -a target/dist/%{name}-%{version}%{beta}/%{name}-optional-%{version}%{beta}.jar \
+%{__cp} -a target/dist/%{name}-%{version}/%{name}-optional-%{version}.jar \
   %{buildroot}%{_javadir}/%{name}-optional-%{version}.jar
 (cd %{buildroot}%{_javadir} && for jar in *-%{version}.jar; do %{__ln_s} ${jar} `echo $jar| %__sed "s|-%{version}||g"`; done)
 
@@ -197,7 +200,7 @@ werken.xpath xalan-j2 xerces-j2 avalon-logkit commons-lang)
 
 # demo
 %{__mkdir_p} %{buildroot}%{_datadir}/%{name}
-%{__cp} -a target/dist/%{name}-%{version}%{beta}/contrib/* \
+%{__cp} -a target/dist/%{name}-%{version}/contrib/* \
   %{buildroot}%{_datadir}/%{name}
 
 # ant.d
@@ -209,23 +212,19 @@ EOF
 # javadoc
 %{__mkdir_p} %{buildroot}%{_javadocdir}/%{name}-%{version}
 # FIXME: This allows --short-circuit (%%exclude should be used instead).
-if [ -d target/dist/%{name}-%{version}%{beta}/docs/api ]; then
-  %{__cp} -a target/dist/%{name}-%{version}%{beta}/docs/api/* \
+if [ -d target/dist/%{name}-%{version}/docs/api ]; then
+  %{__cp} -a target/dist/%{name}-%{version}/docs/api/* \
     %{buildroot}%{_javadocdir}/%{name}-%{version}
 fi
-%{__rm} -rf target/dist/%{name}-%{version}%{beta}/docs/api
-%{__ln_s} %{_javadocdir}/%{name} target/dist/%{name}-%{version}%{beta}/docs/api
-%{__ln_s} %{name}-%{version} %{buildroot}%{_javadocdir}/%{name} # ghost symlink
-
-# fix end-of-line
-%{__perl} -pi -e 's/\r$//g' LICENSE LICENSE.apache LICENSE.apache20 \
-README RIGHTS.antlr *.header *.xml
+%{__rm} -rf target/dist/%{name}-%{version}/docs/api
+%{__ln_s} %{_javadocdir}/%{name} target/dist/%{name}-%{version}/docs/api
+%{__ln_s} %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
 
 for i in `find %{buildroot}%{_datadir}/%{name} -type f`; do
   %{__perl} -pi -e 's/\r$//g' $i
 done
 
-for i in `find target/dist/%{name}-%{version}%{beta}/docs -type f`; do
+for i in `find target/dist/%{name}-%{version}/docs -type f`; do
   %{__perl} -pi -e 's/\r$//g' $i
 done
 
@@ -261,15 +260,6 @@ fi
 %if %{gcj_support}
 %{clean_gcjdb}
 %endif
-
-%post javadoc
-%{__rm} -f %{_javadocdir}/%{name}
-%{__ln_s} %{name}-%{version} %{_javadocdir}/%{name}
-
-%postun javadoc
-if [ $1 -eq 0 ]; then
-  %{__rm} -f %{_javadocdir}/%{name}
-fi
 
 %post optional
 %if %{gcj_support}
@@ -310,11 +300,11 @@ fi
 %files javadoc
 %defattr(0644,root,root,0755)
 %doc %{_javadocdir}/%{name}-%{version}
-%ghost %doc %{_javadocdir}/%{name}
+%doc %{_javadocdir}/%{name}
 
 %files manual
 %defattr(0644,root,root,0755)
-%doc target/dist/%{name}-%{version}%{beta}/docs/*
+%doc target/dist/%{name}-%{version}/docs/*
 
 %files optional
 %defattr(0644,root,root,0755)
@@ -323,5 +313,3 @@ fi
 %if %{gcj_support}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-optional-%{version}.jar.*
 %endif
-
-
