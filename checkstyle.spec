@@ -47,6 +47,7 @@ BuildRequires:  java-gcj-compat-devel
 %else
 BuildArch:      noarch
 %endif
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
 Checkstyle is a development tool to help programmers write Java code 
