@@ -5,7 +5,7 @@
 
 Name:           checkstyle
 Version:        4.4
-Release:        %mkrel 0.0.1
+Release:        %mkrel 0.0.2
 Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
