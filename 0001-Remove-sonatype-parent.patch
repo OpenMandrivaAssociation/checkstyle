@@ -1,0 +1,30 @@
+From ce9c855bc485bb1df802b753e5443deddcd740d5 Mon Sep 17 00:00:00 2001
+From: Stanislav Ochotnicky <sochotnicky@redhat.com>
+Date: Thu, 21 Oct 2010 14:59:43 +0200
+Subject: [PATCH 1/2] Remove sonatype parent
+
+---
+ pom.xml |    7 -------
+ 1 files changed, 0 insertions(+), 7 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index f54cd34..6d4ae4c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -2,13 +2,6 @@
+ 
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 
+-  <!-- Used for making releases. -->
+-  <parent>
+-    <artifactId>oss-parent</artifactId>
+-    <groupId>org.sonatype.oss</groupId>
+-    <version>5</version>
+-  </parent>
+-
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.puppycrawl.tools</groupId>
+   <artifactId>checkstyle</artifactId>
+-- 
+1.7.2.3
+

@@ -1,0 +1,27 @@
+From 283e474e39adab99e3c7c88455bd4723b65c5e38 Mon Sep 17 00:00:00 2001
+From: Stanislav Ochotnicky <sochotnicky@redhat.com>
+Date: Thu, 21 Oct 2010 15:10:47 +0200
+Subject: [PATCH 2/2] Remove linkcheck plugin
+
+---
+ pom.xml |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index 6d4ae4c..6ebda69 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -347,10 +347,6 @@
+       </plugin>
+ 
+       <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-linkcheck-plugin</artifactId>
+-      </plugin>
+-      <plugin>
+       	<groupId>org.apache.maven.plugins</groupId>
+       	<artifactId>maven-eclipse-plugin</artifactId>
+         <configuration>
+-- 
+1.7.2.3
+
