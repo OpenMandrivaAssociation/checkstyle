@@ -1,0 +1,27 @@
+#!/bin/sh
+# 
+# Checkstyle script
+# JPackage Project <http://www.jpackage.org/>
+# $Id: checkstyle.checkstyle.script,v 1.1 2002/07/11 17:37:37 scop Exp $
+
+# Source functions library
+if [ -r /usr/share/java-utils/java-functions ] ; then 
+  . /usr/share/java-utils/java-functions
+else
+  echo "Can't find functions library, aborting"
+  exit 1
+fi
+
+# Configuration
+MAIN_CLASS=com.puppycrawl.tools.checkstyle.Main
+BASE_JARS="checkstyle.jar antlr.jar jakarta-commons-beanutils.jar jakarta-commons-cli.jar jakarta-commons-logging.jar jakarta-commons-collections.jar jaxp_parser_impl.jar"
+CLASSPATH=$CLASSPATH:$(build-classpath checkstyle-optional 2>/dev/null) || :
+
+# Set parameters
+set_jvm
+set_classpath $BASE_JARS
+set_flags $BASE_FLAGS
+set_options $BASE_OPTIONS
+
+# Let's start
+run "$@"

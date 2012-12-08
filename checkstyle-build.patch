@@ -1,0 +1,41 @@
+--- checkstyle-src-4.4/build.xml.build	2007-12-16 22:39:03.000000000 +0100
++++ checkstyle-src-4.4/build.xml	2007-12-20 20:24:38.000000000 +0100
+@@ -499,6 +499,7 @@
+          basedir="${checkstyle.dest}"
+          includes="**/j2ee/**"/>
+     <!-- copy the JARS and make a mega JAR out of them -->
++    <!--
+     <copy file="${antlr.jar}" todir="${dist.dir}/checkstyle-${version}" />
+     <copy file="${beanutils.jar}" todir="${dist.dir}/checkstyle-${version}" />
+     <copy file="${collections.jar}" todir="${dist.dir}/checkstyle-${version}" />
+@@ -508,13 +509,13 @@
+     	 manifest="${target.dir}/manifest.mf" 
+     	 filesetmanifest="skip">
+         <zipfileset src="${dist.dir}/checkstyle-${version}/antlr.jar" excludes="META-INF/*"/>
+-        <!-- beanutils packages parts of commons collections, exclude it here so we don't have it in checkstyle-all.jar twice -->
+     	<zipfileset src="${dist.dir}/checkstyle-${version}/commons-beanutils-core.jar" excludes="META-INF/*,org/apache/commons/collections/*,**/*.html"/>
+         <zipfileset src="${dist.dir}/checkstyle-${version}/commons-collections.jar" excludes="META-INF/*"/>
+         <zipfileset src="${dist.dir}/checkstyle-${version}/commons-cli.jar" excludes="META-INF/*"/>
+         <zipfileset src="${dist.dir}/checkstyle-${version}/commons-logging.jar" excludes="META-INF/*,**/package.html"/>
+         <zipfileset src="${dist.dir}/checkstyle-${version}/checkstyle-${version}.jar" excludes="META-INF/*"/>
+     </jar>	
++    -->
+     <!-- copy stuff without filtering -->
+     <copy todir="${dist.dir}/checkstyle-${version}">
+       <fileset dir=".">
+@@ -537,6 +538,7 @@
+     </copy>
+ 
+     <!-- create the final zip & tar/gzip files -->
++    <!--
+     <zip zipfile="${dist.dir}/checkstyle-${version}.zip">
+       <fileset dir="${dist.dir}">
+         <include name="checkstyle-${version}/**"/>
+@@ -546,6 +548,7 @@
+          basedir="${dist.dir}" includes="checkstyle-${version}/**" />
+     <gzip zipfile="${dist.dir}/checkstyle-${version}.tar.gz"
+           src="${dist.dir}/checkstyle-${version}.tar" />
++  -->
+   </target>
+ 
+   <target name="build.srcdist" depends="checkstyle.checkstyle"
