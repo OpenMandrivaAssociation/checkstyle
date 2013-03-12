@@ -10,7 +10,7 @@ Epoch:          0
 Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
 Group:          Development/Java
-URL:            http://checkstyle.sourceforge.net/
+Url:            http://checkstyle.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/checkstyle/checkstyle-src-%{version}.tar.gz
 Source1:        %{name}-script
 Source2:        %{name}.catalog
@@ -23,21 +23,30 @@ Requires:       antlr >= 0:2.7.1, jakarta-commons-logging
 Requires:       jakarta-commons-cli, jakarta-commons-beanutils
 Requires:       jakarta-commons-collections, jpackage-utils >= 0:1.5
 Requires:       jaxp_parser_impl
-BuildRequires:  ant >= 0:1.6, ant-nodeps >= 0:1.6
+
+BuildRequires:  ant >= 0:1.6
+BuildRequires:	ant-nodeps >= 0:1.6
 %if %{build_tests}
 BuildRequires:  ant-junit >= 0:1.6
 # FIXME: Need to package emma <http://emma.sf.net/>
 BuildRequires:  emma
 %endif
 BuildRequires:  junit, antlr >= 0:2.7.1
-BuildRequires:  jakarta-commons-beanutils, jakarta-commons-lang
-BuildRequires:  jakarta-commons-cli, xalan-j2, java-rpmbuild >= 0:1.5
+BuildRequires:  jakarta-commons-beanutils
+BuildRequires:	jakarta-commons-lang
+BuildRequires:  jakarta-commons-cli
+BuildRequires:	xalan-j2
+BuildRequires:	java-rpmbuild >= 0:1.5
 # xerces-j2 because tests fail with gnujaxp...
-BuildRequires:  jakarta-commons-logging, jakarta-commons-collections, xerces-j2
+BuildRequires:  jakarta-commons-logging
+BuildRequires:	jakarta-commons-collections
+BuildRequires:	xerces-j2
 BuildRequires:  antlr-javadoc
 #BuildRequires:  xml-commons-jaxp-1.3-apis-javadoc
 BuildRequires:  xml-commons-apis-javadoc
-BuildRequires:  jakarta-commons-beanutils-javadoc, ant-javadoc, perl-base
+BuildRequires:  jakarta-commons-beanutils-javadoc
+BuildRequires:	ant-javadoc
+BuildRequires:	perl-base
 BuildRequires:  java-devel
 BuildRequires:  java-javadoc
 BuildRequires:  avalon-logkit 
