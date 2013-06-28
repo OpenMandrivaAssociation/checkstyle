@@ -3,11 +3,10 @@
 %define build_free 1
 %define build_tests 0
 
+Summary:        Helps programmers write Java code that adheres to a coding standard
 Name:           checkstyle
 Version:        4.4
 Release:        0.0.6
-Epoch:          0
-Summary:        Helps programmers write Java code that adheres to a coding standard
 License:        LGPL
 Group:          Development/Java
 Url:            http://checkstyle.sourceforge.net/
@@ -86,7 +85,7 @@ your development environment. The distribution includes:
 %package        demo
 Group:          Development/Java
 Summary:        Demos for %{name}
-Requires:       %{name} = %{epoch}:%{version}
+Requires:       %{name} = %{version}-%{release}
 
 %description    demo
 Demonstrations and samples for %{name}.
@@ -108,13 +107,13 @@ Manual for %{name}.
 %package        optional
 Group:          Development/Java
 Summary:        Optional functionality for %{name}
-Requires:       %{name} = %{epoch}:%{version}
+Requires:       %{name} = %{version}-%{release}
 
 %description    optional
 Optional functionality for %{name}.
 
 %prep
-%setup -q -n %{name}-src-%{version}
+%setup -qn %{name}-src-%{version}
 %patch0 -p1 -b .build
 %patch1 -p1 -b .javadoc
 %if %{build_free}
@@ -126,14 +125,14 @@ Optional functionality for %{name}.
 %{__perl} -pi -e 's|.*classpathref="javadoc\.classpath".*\n||g;' build.xml
 
 # remove all binary libs
-%{_bindir}/find . -name '*.jar' | %{_bindir}/xargs -t %{__rm}
+%{_bindir}/find . -name '*.jar' | %{_bindir}/xargs -t rm
 
 # fix end-of-line
 %{__perl} -pi -e 's/\r$//g' LICENSE LICENSE.apache LICENSE.apache20 \
 README RIGHTS.antlr *.header *.xml
 
 %if %{build_free}
-%{__rm} -rf src/checkstyle/com/puppycrawl/tools/checkstyle/doclets
+rm -rf src/checkstyle/com/puppycrawl/tools/checkstyle/doclets
 %endif
 
 %build
@@ -146,101 +145,99 @@ export CLASSPATH=$(build-classpath antlr commons-beanutils \
 commons-collections commons-cli commons-logging jdom junit velocity \
 werken.xpath xalan-j2 xerces-j2 avalon-logkit commons-lang)
 
-%{ant} \
-  -Dbuild.sysclasspath=first \
-  -Dant.javadoc=%{_javadocdir}/ant \
-  -Dantlr.javadoc=%{_javadocdir}/antlr \
-  -Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-  -Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-  -Djava.javadoc=%{_javadocdir}/java \
-  compile.checkstyle
-%{ant} \
-  -Dant.javadoc=%{_javadocdir}/ant \
-  -Dantlr.javadoc=%{_javadocdir}/antlr \
-  -Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-  -Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-  -Djava.javadoc=%{_javadocdir}/java \
-  javadoc
-%{ant} \
-  -Dbuild.sysclasspath=first \
-  -Dant.javadoc=%{_javadocdir}/ant \
-  -Dantlr.javadoc=%{_javadocdir}/antlr \
-  -Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-  -Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-  -Djava.javadoc=%{_javadocdir}/java \
-  xdocs
-%{ant} \
-  -Dbuild.sysclasspath=first \
-  -Dant.javadoc=%{_javadocdir}/ant \
-  -Dantlr.javadoc=%{_javadocdir}/antlr \
-  -Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-  -Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-  -Djava.javadoc=%{_javadocdir}/java \
-  build.bindist
+%ant \
+	-Dbuild.sysclasspath=first \
+	-Dant.javadoc=%{_javadocdir}/ant \
+	-Dantlr.javadoc=%{_javadocdir}/antlr \
+	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
+	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
+	-Djava.javadoc=%{_javadocdir}/java \
+	compile.checkstyle
+%ant \
+	-Dant.javadoc=%{_javadocdir}/ant \
+	-Dantlr.javadoc=%{_javadocdir}/antlr \
+	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
+	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
+	-Djava.javadoc=%{_javadocdir}/java \
+	javadoc
+%ant \
+	-Dbuild.sysclasspath=first \
+	-Dant.javadoc=%{_javadocdir}/ant \
+	-Dantlr.javadoc=%{_javadocdir}/antlr \
+	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
+	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
+	-Djava.javadoc=%{_javadocdir}/java \
+	xdocs
+%ant \
+	-Dbuild.sysclasspath=first \
+	-Dant.javadoc=%{_javadocdir}/ant \
+	-Dantlr.javadoc=%{_javadocdir}/antlr \
+	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
+	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
+	-Djava.javadoc=%{_javadocdir}/java \
+	build.bindist
 %if %{build_tests}
-%{ant} \
-  -Dbuild.sysclasspath=first \
-  -Dant.javadoc=%{_javadocdir}/ant \
-  -Dantlr.javadoc=%{_javadocdir}/antlr \
-  -Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-  -Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-  -Djava.javadoc=%{_javadocdir}/java \
-  run.tests
+%ant \
+	-Dbuild.sysclasspath=first \
+	-Dant.javadoc=%{_javadocdir}/ant \
+	-Dantlr.javadoc=%{_javadocdir}/antlr \
+	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
+	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
+	-Djava.javadoc=%{_javadocdir}/java \
+	run.tests
 %endif
 
 %install
-%{__rm} -rf %{buildroot}
-
 # jar
-%{__mkdir_p} %{buildroot}%{_javadir}
+mkdir -p %{buildroot}%{_javadir}
 cp -a target/dist/%{name}-%{version}/%{name}-%{version}.jar \
   %{buildroot}%{_javadir}/%{name}-%{version}.jar
 cp -a target/dist/%{name}-%{version}/%{name}-optional-%{version}.jar \
   %{buildroot}%{_javadir}/%{name}-optional-%{version}.jar
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}.jar; do %{__ln_s} ${jar} `echo $jar| %__sed "s|-%{version}||g"`; done)
+(cd %{buildroot}%{_javadir} && for jar in *-%{version}.jar; do ln -s ${jar} `echo $jar| %__sed "s|-%{version}||g"`; done)
 
 # script
-%{__mkdir_p} %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_bindir}
 cp -a %{SOURCE1} %{buildroot}%{_bindir}/%{name}
 
 # dtds
-%{__mkdir_p} %{buildroot}%{_datadir}/xml/%{name}
+mkdir -p %{buildroot}%{_datadir}/xml/%{name}
 cp -a %{SOURCE2} %{buildroot}%{_datadir}/xml/%{name}/catalog
 cp -a src/checkstyle/com/puppycrawl/tools/checkstyle/*.dtd \
   %{buildroot}%{_datadir}/xml/%{name}
 
 # demo
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}
+mkdir -p %{buildroot}%{_datadir}/%{name}
 cp -a target/dist/%{name}-%{version}/contrib/* \
   %{buildroot}%{_datadir}/%{name}
 
 # ant.d
-%{__mkdir_p}  %{buildroot}%{_sysconfdir}/ant.d
+mkdir -p  %{buildroot}%{_sysconfdir}/ant.d
 %{__cat} > %{buildroot}%{_sysconfdir}/ant.d/%{name} << EOF
 checkstyle antlr jakarta-commons-beanutils jakarta-commons-cli jakarta-commons-logging jakarta-commons-collections jaxp_parser_impl
 EOF
 
 # javadoc
-%{__mkdir_p} %{buildroot}%{_javadocdir}/%{name}-%{version}
+mkdir -p %{buildroot}%{_javadocdir}/%{name}-%{version}
 # FIXME: This allows --short-circuit (%%exclude should be used instead).
 if [ -d target/dist/%{name}-%{version}/docs/api ]; then
   cp -a target/dist/%{name}-%{version}/docs/api/* \
     %{buildroot}%{_javadocdir}/%{name}-%{version}
 fi
-%{__rm} -rf target/dist/%{name}-%{version}/docs/api
-%{__ln_s} %{_javadocdir}/%{name} target/dist/%{name}-%{version}/docs/api
-%{__ln_s} %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
+rm -rf target/dist/%{name}-%{version}/docs/api
+ln -s %{_javadocdir}/%{name} target/dist/%{name}-%{version}/docs/api
+ln -s %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
 
 for i in `find %{buildroot}%{_datadir}/%{name} -type f`; do
-  %{__perl} -pi -e 's/\r$//g' $i
+  perl -pi -e 's/\r$//g' $i
 done
 
 for i in `find target/dist/%{name}-%{version}/docs -type f`; do
-  %{__perl} -pi -e 's/\r$//g' $i
+  perl -pi -e 's/\r$//g' $i
 done
 
 for i in `find %{buildroot}%{_datadir}/xml/%{name} -type f -name "*.dtd"`; do
-  %{__perl} -pi -e 's/\r$//g' $i
+  perl -pi -e 's/\r$//g' $i
 done
 
 %if %{gcj_support}
@@ -273,18 +270,17 @@ fi
 %if %{gcj_support}
 %{update_gcjdb}
 %endif
-%{__grep} -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} || \
-%{__perl} -pi -e 's|checkstyle|checkstyle checkstyle-optional|' %{_sysconfdir}/ant.d/%{name}
+grep -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} || \
+sed -i -e 's|checkstyle|checkstyle checkstyle-optional|' %{_sysconfdir}/ant.d/%{name}
 
 %postun optional
-%{__grep} -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} && \
-%{__perl} -pi -e 's|checkstyle-optional ||' %{_sysconfdir}/ant.d/%{name} || :
+grep -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} && \
+sed -i -e 's|checkstyle-optional ||' %{_sysconfdir}/ant.d/%{name} || :
 %if %{gcj_support}
 %{clean_gcjdb}
 %endif
 
 %files
-%defattr(0644,root,root,0755)
 %doc LICENSE LICENSE.apache LICENSE.apache20 README RIGHTS.antlr
 %doc build.xml checkstyle_checks.xml import-control.xml java.header
 %doc sun_checks.xml suppressions.xml
@@ -301,126 +297,20 @@ fi
 %{_datadir}/%{name}/*.xsl
 
 %files demo
-%defattr(0644,root,root,0755)
 %exclude %{_datadir}/%{name}/*.xsl
 %{_datadir}/%{name}/*
 
 %files javadoc
-%defattr(0644,root,root,0755)
 %doc %{_javadocdir}/%{name}-%{version}
 %doc %{_javadocdir}/%{name}
 
 %files manual
-%defattr(0644,root,root,0755)
 %doc target/dist/%{name}-%{version}/docs/*
 
 %files optional
-%defattr(0644,root,root,0755)
 %{_javadir}/%{name}-optional.jar
 %{_javadir}/%{name}-optional-%{version}.jar
 %if %{gcj_support}
 %attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-optional-%{version}.jar.*
 %endif
-
-
-%changelog
-* Tue Nov 30 2010 Oden Eriksson <oeriksson@mandriva.com> 0:4.4-0.0.4mdv2011.0
-+ Revision: 603826
-- rebuild
-
-* Tue Mar 16 2010 Oden Eriksson <oeriksson@mandriva.com> 0:4.4-0.0.3mdv2010.1
-+ Revision: 522358
-- rebuilt for 2010.1
-
-* Sun Aug 09 2009 Oden Eriksson <oeriksson@mandriva.com> 0:4.4-0.0.2mdv2010.0
-+ Revision: 413232
-- rebuild
-
-* Tue Apr 07 2009 Funda Wang <fwang@mandriva.org> 0:4.4-0.0.1mdv2009.1
-+ Revision: 364751
-- rediff javadoc patch
-
-* Wed Jan 02 2008 Olivier Blin <oblin@mandriva.com> 0:4.4-0.0.1mdv2009.0
-+ Revision: 140692
-- restore BuildRoot
-
-* Thu Dec 20 2007 David Walluck <walluck@mandriva.org> 0:4.4-0.0.1mdv2008.1
-+ Revision: 135942
-- 4.4
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - kill re-definition of %%buildroot on Pixel's request
-
-* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:4.3-5mdv2008.1
-+ Revision: 120849
-- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
-
-* Mon Nov 26 2007 David Walluck <walluck@mandriva.org> 0:4.3-4mdv2008.1
-+ Revision: 112037
-- fix build by requiring commons-lang (thanks akurtakov)
-
-  + Anssi Hannula <anssi@mandriva.org>
-    - remove unnecessary Requires(post) on java-gcj-compat
-
-  + Thierry Vignaud <tv@mandriva.org>
-    - kill file require on perl-base
-
-
-* Sun Mar 04 2007 David Walluck <walluck@mandriva.org> 4.3-1mdv2007.0
-+ Revision: 132014
-- 4.3
-- Import checkstyle
-
-* Tue Jul 11 2006 David Walluck <walluck@mandriva.org> 0:4.2-1mdv2007.0
-- 4.2
-- add supressions 1.2 dtd to catalog
-
-* Tue Jun 06 2006 David Walluck <walluck@mandriva.org> 0:4.1-4mdv2007.0
-- fix macro in %%post
-
-* Mon Jun 05 2006 David Walluck <walluck@mandriva.org> 0:4.1-3
-- rebuild for libgcj.so.7
-- own %%{_libdir}/gcj/%%{name}
-
-* Wed Jan 18 2006 David Walluck <walluck@mandriva.org> 0:4.1-2mdk
-- BuildRequires
-- fix javadoc build
-- fix file permissions
-
-* Fri Dec 16 2005 David Walluck <walluck@mandriva.org> 0:4.1-1mdk
-- 4.1
-
-* Tue Nov 29 2005 David Walluck <walluck@mandriva.org> 0:4.0-1mdk
-* Tue Nov 08 2005 David Walluck <walluck@mandriva.org> 0:4.0-0.beta6.2mdk
-- don't require ant-junit unconditionally
-- include xsl files in main package instead of demo package
-
-* Wed Nov 02 2005 David Walluck <walluck@mandriva.org> 0:4.0-0.beta6.1mdk
-- 4.0-beta6
-- natively compile
-
-* Sun May 29 2005 David Walluck <walluck@mandriva.org> 0:3.5-1.1mdk
-- release
-
-* Mon Feb 21 2005 David Walluck <david@jpackage.org> 0:3.5-1jpp
-- 0.3.5
-- fix ant task with new ant
-- add more files to %%doc
-
-* Sat Aug 21 2004 Ralph Apel <r.apel at r-apel.de> - 0:3.4-4jpp
-- Build with ant-1.6.2
-- Runtime Req ant >= 0:1.6.2
-
-* Sat Aug 07 2004 Ralph Apel <r.apel at r-apel.de> - 0:3.4-3jpp
-- Void change
-
-* Wed Jun 02 2004 Randy Watler <rwatler at finali.com> - 0:3.4-2jpp
-- Upgrade to Ant 1.6.X
-
-* Tue Apr 13 2004 Ville Skyttä <ville.skytta at iki.fi> - 0:3.4-1jpp
-- Update to 3.4.
-- Make -optional depend on the main package.
-- Update DTD catalog, move DTDs to %%{_datadir}/xml/%%{name}.
-- New style versionless javadoc dir symlinking.
-- Add -optional jar to classpath in startup script if available.
 
