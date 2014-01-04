@@ -31,7 +31,7 @@
 
 Name:           checkstyle
 Version:        5.6
-Release:        7.0%{?dist}
+Release:        7.1%{?dist}
 Summary:        Java source code checker
 URL:            http://checkstyle.sourceforge.net/
 # src/checkstyle/com/puppycrawl/tools/checkstyle/grammars/java.g is GPLv2+
@@ -151,6 +151,11 @@ install -dm 755  %{buildroot}%{_sysconfdir}/ant.d
 cat > %{buildroot}%{_sysconfdir}/ant.d/%{name} << EOF
 checkstyle antlr apache-commons-beanutils apache-commons-cli apache-commons-logging guava
 EOF
+
+%if 0%{?fedora}
+%else
+sed -i 's|<version>2.7.7</version>||' %{buildroot}%{_mavendepmapfragdir}/*
+%endif
 
 %post
 # Note that we're using a fully versioned catalog, so this is always ok.
