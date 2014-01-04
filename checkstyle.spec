@@ -1,89 +1,91 @@
-%define gcj_support 1
-%define section free
-%define build_free 1
-%define build_tests 0
+%{?_javapackages_macros:%_javapackages_macros}
+# Copyright (c) 2000-2005, JPackage Project
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the
+#    distribution.
+# 3. Neither the name of the JPackage Project nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 
-Summary:        Helps programmers write Java code that adheres to a coding standard
 Name:           checkstyle
-Version:        4.4
-Release:        0.0.10
-License:        LGPL
-Group:          Development/Java
-Url:            http://checkstyle.sourceforge.net/
-Source0:        http://downloads.sourceforge.net/checkstyle/checkstyle-src-%{version}.tar.gz
-Source1:        %{name}-script
-Source2:        %{name}.catalog
-Patch0:         %{name}-build.patch
-Patch1:         %{name}-javadoc-crosslink.patch
-Patch2:         %{name}-build-free.patch
-Patch3:         %{name}-exclude-smap.patch
-Requires:       ant >= 0:1.6
-Requires:       antlr >= 0:2.7.1, jakarta-commons-logging
-Requires:       jakarta-commons-cli, jakarta-commons-beanutils
-Requires:       jakarta-commons-collections, jpackage-utils >= 0:1.5
-Requires:       jaxp_parser_impl
+Version:        5.6
+Release:        7.0%{?dist}
+Summary:        Java source code checker
+URL:            http://checkstyle.sourceforge.net/
+# src/checkstyle/com/puppycrawl/tools/checkstyle/grammars/java.g is GPLv2+
+# Most of the files in contrib/usage/src/checkstyle/com/puppycrawl/tools/checkstyle/checks/usage/transmogrify/ are BSD
+License:        LGPLv2+ and GPLv2+ and BSD
 
-BuildRequires:  ant >= 0:1.6
-BuildRequires:	ant-nodeps >= 0:1.6
-%if %{build_tests}
-BuildRequires:  ant-junit >= 0:1.6
-# FIXME: Need to package emma <http://emma.sf.net/>
-BuildRequires:  emma
-%endif
-BuildRequires:  junit, antlr >= 0:2.7.1
-BuildRequires:  jakarta-commons-beanutils
-BuildRequires:	jakarta-commons-lang
-BuildRequires:  jakarta-commons-cli
-BuildRequires:	xalan-j2
-BuildRequires:	java-rpmbuild >= 0:1.5
-# xerces-j2 because tests fail with gnujaxp...
-BuildRequires:  jakarta-commons-logging
-BuildRequires:	jakarta-commons-collections
-BuildRequires:	xerces-j2
-BuildRequires:  antlr-javadoc
-#BuildRequires:  xml-commons-jaxp-1.3-apis-javadoc
-BuildRequires:  xml-commons-apis-javadoc
-BuildRequires:  jakarta-commons-beanutils-javadoc
-BuildRequires:	ant-javadoc
-BuildRequires:	perl-base
-BuildRequires:  java-devel
-BuildRequires:  java-javadoc
-BuildRequires:  avalon-logkit 
-BuildRequires:  jdom
-BuildRequires:  velocity
-BuildRequires:  werken.xpath
-%if %{gcj_support}
-BuildRequires:  java-gcj-compat-devel
+Source0:        http://download.sf.net/checkstyle/checkstyle-%{version}-src.tar.gz
+Source2:        %{name}.catalog
+
+# Used for releases only, no use for us
+Patch0:         0001-Remove-sonatype-parent.patch
+
+# not available in Fedora yet
+Patch1:         0002-Remove-linkcheck-plugin.patch
+
+# get rid of eclipse dependency
+Patch2:         0003-Remove-eclipse-plugin.patch
+
+%if 0%{?fedora}
 %else
-BuildArch:      noarch
+Patch3:         %{name}-ftbfs.patch
 %endif
+
+BuildRequires:  java-devel >= 1:1.6.0
+BuildRequires:  antlr-maven-plugin
+BuildRequires:  apache-commons-beanutils
+BuildRequires:  apache-commons-cli
+BuildRequires:  apache-commons-logging
+BuildRequires:  guava
+BuildRequires:  junit
+BuildRequires:  maven-local
+BuildRequires:  maven-antrun-plugin
+BuildRequires:  maven-compiler-plugin
+BuildRequires:  maven-enforcer-plugin
+BuildRequires:  maven-install-plugin
+BuildRequires:  maven-jar-plugin
+BuildRequires:  maven-javadoc-plugin
+BuildRequires:  maven-resources-plugin
+BuildRequires:  maven-site-plugin
+BuildRequires:  maven-surefire-plugin
+BuildRequires:  maven-surefire-provider-junit4
+
+BuildArch:      noarch
+
+Obsoletes:      %{name}-optional < %{version}-%{release}
+# revisit later, maybe manual will come back when change from ant to
+# maven build system will settle down
+Obsoletes:      %{name}-manual < %{version}-%{release}
 
 %description
-Checkstyle is a development tool to help programmers write Java code 
-that adheres to a coding standard. It automates the process of checking 
-Java code to spare humans of this boring (but important) task. This 
-makes it ideal for projects that want to enforce a coding standard.
-
-Checkstyle is highly configurable and can be made to support almost any 
-coding standard. An example configuration file is supplied supporting 
-the Sun Code Conventions. As well, other sample configuration files are 
-supplied for other well known conventions.
-
-Checkstyle can check many aspects of your source code. Historically 
-it's main functionality has been to check code layout issues, but since 
-the internal architecture was changed in version 3, more and more checks 
-for other purposes have been added. Now Checkstyle provides checks that 
-find class design problems, duplicate code, or bug patterns like double 
-checked locking.
-
-Checkstyle is most useful if you integrate it in your build process or 
-your development environment. The distribution includes:
-
-    * An Ant task.
-    * A command line tool.
+A tool for checking Java source code for adherence to a set of rules.
 
 %package        demo
-Group:          Development/Java
+
 Summary:        Demos for %{name}
 Requires:       %{name} = %{version}-%{release}
 
@@ -91,168 +93,71 @@ Requires:       %{name} = %{version}-%{release}
 Demonstrations and samples for %{name}.
 
 %package        javadoc
-Group:          Development/Java
+
 Summary:        Javadoc for %{name}
 
 %description    javadoc
-Javadoc for %{name}.
-
-%package        manual
-Group:          Development/Java
-Summary:        Manual for %{name}
-
-%description    manual
-Manual for %{name}.
-
-%package        optional
-Group:          Development/Java
-Summary:        Optional functionality for %{name}
-Requires:       %{name} = %{version}-%{release}
-
-%description    optional
-Optional functionality for %{name}.
+API documentation for %{name}.
 
 %prep
-%setup -qn %{name}-src-%{version}
-%patch0 -p1 -b .build
-%patch1 -p1 -b .javadoc
-%if %{build_free}
-%patch2 -p1 -b .free
+%setup -q -n %{name}-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%if 0%{?fedora}
+%else
+%patch3 -p1
 %endif
-%patch3 -p1 -b .smap
 
-%{__perl} -pi -e 's|\./{\@docRoot}/\.\./index\.html|file://%{_docdir}/%{name}-manual-%{version}/index.html|' build.xml
-%{__perl} -pi -e 's|.*classpathref="javadoc\.classpath".*\n||g;' build.xml
+# these are only needed for upstream QA
+%pom_remove_plugin :cobertura-maven-plugin
+%pom_remove_plugin :exec-maven-plugin
 
-# remove all binary libs
-%{_bindir}/find . -name '*.jar' | %{_bindir}/xargs -t rm
+# fix encoding issues in docs
+sed -i 's/\r//' LICENSE LICENSE.apache20 README RIGHTS.antlr \
+         checkstyle_checks.xml sun_checks.xml suppressions.xml \
+         contrib/hooks/*.pl src/site/resources/css/*css \
+         java.header
 
-# fix end-of-line
-%{__perl} -pi -e 's/\r$//g' LICENSE LICENSE.apache LICENSE.apache20 \
-README RIGHTS.antlr *.header *.xml
-
-%if %{build_free}
-rm -rf src/checkstyle/com/puppycrawl/tools/checkstyle/doclets
-%endif
+# The following test needs network access, so it would fail on Koji
+rm -f src/tests/com/puppycrawl/tools/checkstyle/filters/SuppressionsLoaderTest.java
 
 %build
-OPT_JAR_LIST="ant/ant-nodeps"
-%if %{build_tests}
-OPT_JAR_LIST="$OPT_JAR_LIST ant/ant-junit"
-%endif
-export OPT_JAR_LIST
-export CLASSPATH=$(build-classpath antlr commons-beanutils \
-commons-collections commons-cli commons-logging jdom junit velocity \
-werken.xpath xalan-j2 xerces-j2 avalon-logkit commons-lang)
+%mvn_file  : %{name}
+%mvn_build
 
-%ant \
-	-Dbuild.sysclasspath=first \
-	-Dant.javadoc=%{_javadocdir}/ant \
-	-Dantlr.javadoc=%{_javadocdir}/antlr \
-	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-	-Djava.javadoc=%{_javadocdir}/java \
-	compile.checkstyle
-%ant \
-	-Dant.javadoc=%{_javadocdir}/ant \
-	-Dantlr.javadoc=%{_javadocdir}/antlr \
-	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-	-Djava.javadoc=%{_javadocdir}/java \
-	javadoc
-%ant \
-	-Dbuild.sysclasspath=first \
-	-Dant.javadoc=%{_javadocdir}/ant \
-	-Dantlr.javadoc=%{_javadocdir}/antlr \
-	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-	-Djava.javadoc=%{_javadocdir}/java \
-	xdocs
-%ant \
-	-Dbuild.sysclasspath=first \
-	-Dant.javadoc=%{_javadocdir}/ant \
-	-Dantlr.javadoc=%{_javadocdir}/antlr \
-	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-	-Djava.javadoc=%{_javadocdir}/java \
-	build.bindist
-%if %{build_tests}
-%ant \
-	-Dbuild.sysclasspath=first \
-	-Dant.javadoc=%{_javadocdir}/ant \
-	-Dantlr.javadoc=%{_javadocdir}/antlr \
-	-Djaxp.javadoc=%{_javadocdir}/xml-commons-apis \
-	-Dbeanutils.javadoc=%{_javadocdir}/jakarta-commons-beanutils \
-	-Djava.javadoc=%{_javadocdir}/java \
-	run.tests
-%endif
 
 %install
-# jar
-mkdir -p %{buildroot}%{_javadir}
-cp -a target/dist/%{name}-%{version}/%{name}-%{version}.jar \
-  %{buildroot}%{_javadir}/%{name}-%{version}.jar
-cp -a target/dist/%{name}-%{version}/%{name}-optional-%{version}.jar \
-  %{buildroot}%{_javadir}/%{name}-optional-%{version}.jar
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}.jar; do ln -s ${jar} `echo $jar| %__sed "s|-%{version}||g"`; done)
+%mvn_install
 
 # script
-mkdir -p %{buildroot}%{_bindir}
-cp -a %{SOURCE1} %{buildroot}%{_bindir}/%{name}
+%jpackage_script com.puppycrawl.tools.checkstyle.Main "" "" checkstyle:antlr:apache-commons-beanutils:apache-commons-cli:apache-commons-logging:guava checkstyle true
 
 # dtds
-mkdir -p %{buildroot}%{_datadir}/xml/%{name}
-cp -a %{SOURCE2} %{buildroot}%{_datadir}/xml/%{name}/catalog
-cp -a src/checkstyle/com/puppycrawl/tools/checkstyle/*.dtd \
+install -Dm 644 %{SOURCE2} %{buildroot}%{_datadir}/xml/%{name}/catalog
+cp -pa src/checkstyle/com/puppycrawl/tools/checkstyle/*.dtd \
   %{buildroot}%{_datadir}/xml/%{name}
 
+# javadoc
+install -dm 755  %{buildroot}%{_javadocdir}/%{name}
+cp -par target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
+
 # demo
-mkdir -p %{buildroot}%{_datadir}/%{name}
-cp -a target/dist/%{name}-%{version}/contrib/* \
-  %{buildroot}%{_datadir}/%{name}
+install -dm 755 %{buildroot}%{_datadir}/%{name}
+cp -par contrib/* %{buildroot}%{_datadir}/%{name}
 
 # ant.d
-mkdir -p  %{buildroot}%{_sysconfdir}/ant.d
-%{__cat} > %{buildroot}%{_sysconfdir}/ant.d/%{name} << EOF
-checkstyle antlr jakarta-commons-beanutils jakarta-commons-cli jakarta-commons-logging jakarta-commons-collections jaxp_parser_impl
+install -dm 755  %{buildroot}%{_sysconfdir}/ant.d
+cat > %{buildroot}%{_sysconfdir}/ant.d/%{name} << EOF
+checkstyle antlr apache-commons-beanutils apache-commons-cli apache-commons-logging guava
 EOF
 
-# javadoc
-mkdir -p %{buildroot}%{_javadocdir}/%{name}-%{version}
-# FIXME: This allows --short-circuit (%%exclude should be used instead).
-if [ -d target/dist/%{name}-%{version}/docs/api ]; then
-  cp -a target/dist/%{name}-%{version}/docs/api/* \
-    %{buildroot}%{_javadocdir}/%{name}-%{version}
-fi
-rm -rf target/dist/%{name}-%{version}/docs/api
-ln -s %{_javadocdir}/%{name} target/dist/%{name}-%{version}/docs/api
-ln -s %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
-
-for i in `find %{buildroot}%{_datadir}/%{name} -type f`; do
-  perl -pi -e 's/\r$//g' $i
-done
-
-for i in `find target/dist/%{name}-%{version}/docs -type f`; do
-  perl -pi -e 's/\r$//g' $i
-done
-
-for i in `find %{buildroot}%{_datadir}/xml/%{name} -type f -name "*.dtd"`; do
-  perl -pi -e 's/\r$//g' $i
-done
-
-%if %{gcj_support}
-%{_bindir}/aot-compile-rpm
-%endif
-
 %post
-%if %{gcj_support}
-%{update_gcjdb}
-%endif
 # Note that we're using a fully versioned catalog, so this is always ok.
 if [ -x %{_bindir}/install-catalog -a -d %{_sysconfdir}/sgml ]; then
   %{_bindir}/install-catalog --add \
     %{_sysconfdir}/sgml/%{name}-%{version}-%{release}.cat \
-    %{_datadir}/xml/%{name}/catalog > /dev/null 2>&1 || :
+    %{_datadir}/xml/%{name}/catalog > /dev/null || :
 fi
 
 %postun
@@ -260,57 +165,189 @@ fi
 if [ -x %{_bindir}/install-catalog -a -d %{_sysconfdir}/sgml ]; then
   %{_bindir}/install-catalog --remove \
     %{_sysconfdir}/sgml/%{name}-%{version}-%{release}.cat \
-    %{_datadir}/xml/%{name}/catalog > /dev/null 2>&1 || :
+    %{_datadir}/xml/%{name}/catalog > /dev/null || :
 fi
-%if %{gcj_support}
-%{clean_gcjdb}
-%endif
 
-%post optional
-%if %{gcj_support}
-%{update_gcjdb}
-%endif
-grep -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} || \
-sed -i -e 's|checkstyle|checkstyle checkstyle-optional|' %{_sysconfdir}/ant.d/%{name}
-
-%postun optional
-grep -q checkstyle-optional %{_sysconfdir}/ant.d/%{name} && \
-sed -i -e 's|checkstyle-optional ||' %{_sysconfdir}/ant.d/%{name} || :
-%if %{gcj_support}
-%{clean_gcjdb}
-%endif
-
-%files
-%doc LICENSE LICENSE.apache LICENSE.apache20 README RIGHTS.antlr
-%doc build.xml checkstyle_checks.xml import-control.xml java.header
-%doc sun_checks.xml suppressions.xml
-%{_javadir}/%{name}.jar
-%{_javadir}/%{name}-%{version}.jar
-%if %{gcj_support}
-%dir %{_libdir}/gcj/%{name}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-%{version}.jar.*
-%endif
+%files -f .mfiles
+%doc LICENSE README
+%doc checkstyle_checks.xml java.header sun_checks.xml suppressions.xml
 %{_datadir}/xml/%{name}
-%attr(0755,root,root) %{_bindir}/*
+%{_bindir}/%{name}
 %config(noreplace) %{_sysconfdir}/ant.d/%{name}
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/*.xsl
 
 %files demo
-%exclude %{_datadir}/%{name}/*.xsl
-%{_datadir}/%{name}/*
+%{_datadir}/%{name}
 
-%files javadoc
-%doc %{_javadocdir}/%{name}-%{version}
-%doc %{_javadocdir}/%{name}
+%files javadoc -f .mfiles-javadoc
+%doc LICENSE
 
-%files manual
-%doc target/dist/%{name}-%{version}/docs/*
 
-%files optional
-%{_javadir}/%{name}-optional.jar
-%{_javadir}/%{name}-optional-%{version}.jar
-%if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-optional-%{version}.jar.*
-%endif
+%changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.6-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
+* Mon Apr 29 2013 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.6-6
+- Remove cobertura and plugin-exec BRs
+
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.6-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Wed Feb 06 2013 Java SIG <java-devel@lists.fedoraproject.org> - 5.6-4
+- Update for https://fedoraproject.org/wiki/Fedora_19_Maven_Rebuild
+- Replace maven BuildRequires with maven-local
+
+* Thu Jan 17 2013 Michal Srb <msrb@redhat.com> - 5.6-3
+- Build with xmvn
+
+* Tue Dec  4 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.6-2
+- Disable unit test that needs network access
+- Remove rpm bug workaround
+
+* Mon Dec  3 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.6-1
+- Update to upstream version 5.6
+
+* Mon Nov 26 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.5-5
+- Install proper license files
+- Resolves: rhbz#880272
+
+* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.5-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Wed Apr 18 2012 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.5-3
+- Patch eclipse plugin out to simplify BR
+- Cleanup and sort requires
+
+* Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Wed Dec 7 2011 Alexander Kurtakov <akurtako@redhat.com> 5.5-1
+- Update to latest upstream (5.5).
+
+* Wed Jul 20 2011 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.4-1
+- Update to latest upstream (5.4)
+
+* Fri Jul  1 2011 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.3-4
+- Generate script using jpackage macro (#718039)
+- Add missing guava Requires
+- Build with maven3 and tweaks according to new guidelines
+
+* Thu Apr 28 2011 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.3-3
+- Remove epoch from demo subpackage
+- Fix script classpaths after jakarta->apache renames
+
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Thu Oct 21 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.3-1
+- Use maven as build system (upstream change)
+- Javadoc subpackage add Require on jpackage-utils
+- Obsolete manual subpackage (not available with mvn)
+- Cleanup BRs/Rs
+- Remove old patches
+
+* Wed Jun  9 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.1-1
+- Rebase to new version
+- Cleanup of whole spec file
+- Enable emma (present in Fedora now)
+- Drop epoch
+
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:4.1-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
+* Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:4.1-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
+* Wed Jul  9 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0:4.1-5
+- drop repotag
+- fix license tag
+
+* Mon Apr 07 2008 Deepak Bhole <dbhole@redhat.com> - 0:4.1-4jpp.3
+- Require java-devel >= 1.6 for javadocs (bug in sinjdoc prevents building)
+
+* Fri Apr 04 2008 Deepak Bhole <dbhole@redhat.com> - 0:4.1-4jpp.2
+- Remove < 1.5 JVM requirement, and keep tests that need 1.5
+
+* Thu Feb 24 2007 Deepak Bhole <dbhole@redhat.com> - 0:4.1-4jpp.1
+- Update per Fedora spec
+- Removed emma and excalibur-avalon-logkit dependencies
+
+* Thu Mar 30 2006 Ralph Apel <r.apel@r-apel.de> 0:4.1-3jpp
+- replace avalon-logkit by excalibur-avalon-logkit as BR
+
+* Wed Feb 22 2006 Ralph Apel <r.apel@r-apel.de> 0:4.1-2jpp
+- add exclude to javadoc task iot build with java-1.4.2-bea
+
+* Wed Feb 15 2006 Ralph Apel <r.apel@r-apel.de> 0:4.1-1jpp
+- update to 4.1 for JPP-1.7
+- reduce dependencies
+
+* Wed Feb 15 2006 Ralph Apel <r.apel@r-apel.de> 0:3.5-2jpp
+- set locale iot avoid failure of GeneratedJava14LexerTest
+
+* Mon Feb 21 2005 David Walluck <david@jpackage.org> 0:3.5-1jpp
+- 0.3.5
+- fix ant task with new ant
+- add more files to %%doc
+
+* Fri Aug 20 2004 Ralph Apel <r.apel at r-apel.de> - 0:3.4-4jpp
+- Build with ant-1.6.2
+- Runtime Req ant >= 0:1.6.2
+
+* Fri Aug 06 2004 Ralph Apel <r.apel at r-apel.de> - 0:3.4-3jpp
+- Void change
+
+* Tue Jun 01 2004 Randy Watler <rwatler at finali.com> - 0:3.4-2jpp
+- Upgrade to Ant 1.6.X
+
+* Mon Apr 12 2004 Ville Skyttä <ville.skytta at iki.fi> - 0:3.4-1jpp
+- Update to 3.4.
+- Make -optional depend on the main package.
+- Update DTD catalog, move DTDs to %%{_datadir}/xml/%%{name}.
+- New style versionless javadoc dir symlinking.
+- Add -optional jar to classpath in startup script if available.
+
+* Tue Jan 20 2004 David Walluck <david@anti-microsoft.org> 0:3.3-1jpp
+- 3.3
+- rediff patches
+- add `optional' subpackage
+
+* Fri Jul 11 2003 Ville Skyttä <ville.skytta at iki.fi> - 0:3.1-2jpp
+- Install DTDs into %%{_datadir}/sgml/%%{name}.
+- Include catalog for DTDs, and install it if %%{_bindir}/install-catalog
+  is available.
+- Javadoc crosslinking.
+
+* Wed Jun  4 2003 Ville Skyttä <ville.skytta at iki.fi> - 0:3.1-1jpp
+- Update to 3.1.
+- Non-versioned javadoc symlinking.
+
+* Fri Apr  4 2003 Ville Skyttä <ville.skytta at iki.fi> - 0:3.0-2jpp
+- Rebuild for JPackage 1.5.
+
+* Sat Mar  1 2003 Ville Skyttä <ville.skytta at iki.fi> - 3.0-1jpp
+- Update to 3.0.
+- Run unit tests during build.
+- Separate manual package.
+
+* Sat Sep 14 2002 Ville Skyttä <ville.skytta at iki.fi> 2.4-1jpp
+- 2.4.
+- No RPM macros in source URL.
+- Use (patched) ant build.bindist task to fix docs.
+
+* Thu Jul 11 2002 Ville Skyttä <ville.skytta at iki.fi> 2.3-2jpp
+- Unbreak build.
+- Add shell script.
+
+* Tue Jul  9 2002 Ville Skyttä <ville.skytta at iki.fi> 2.3-1jpp
+- Updated to 2.3.
+- Use sed instead of bash 2 extension when symlinking jars during build.
+- BuildRequires ant-optional.
+
+* Fri May 10 2002 Ville Skyttä <ville.skytta at iki.fi> 2.2-1jpp
+- Updated to 2.2.
+- Added versioned requirements.
+- Fixed Distribution and Group tags.
+- Added demo package.
+
+* Sun Mar 03 2002 Guillaume Rousse <guillomovitch@users.sourceforge.net> 2.1-1jpp
+- first jpp release

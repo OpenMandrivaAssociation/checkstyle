@@ -1,0 +1,24 @@
+--- checkstyle-5.6/pom.xml.orig	2013-12-20 23:54:53.451790473 -0200
++++ checkstyle-5.6/pom.xml	2013-12-20 23:55:58.721795111 -0200
+@@ -525,8 +525,8 @@
+           <groupId>com.sun</groupId>
+           <artifactId>tools</artifactId>
+           <version>${tools.jar.version}</version>
+-          <scope>system</scope>
+-          <systemPath>${tools.jar.path}</systemPath>
++          <!-- <scope>system</scope>
++          <systemPath>${tools.jar.path}</systemPath> -->
+         </dependency>
+       </dependencies>
+     </profile>
+@@ -543,8 +543,8 @@
+           <groupId>com.sun</groupId>
+           <artifactId>tools</artifactId>
+           <version>${tools.jar.version}</version>
+-          <scope>system</scope>
+-          <systemPath>${tools.jar.path}</systemPath>
++          <!-- <scope>system</scope>>
++          <systemPath>${tools.jar.path}</systemPath> -->
+         </dependency>
+       </dependencies>
+     </profile>
