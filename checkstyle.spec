@@ -6,7 +6,7 @@
 Summary:        Helps programmers write Java code that adheres to a coding standard
 Name:           checkstyle
 Version:        4.4
-Release:        0.0.6
+Release:        0.0.7
 License:        LGPL
 Group:          Development/Java
 Url:            http://checkstyle.sourceforge.net/
