@@ -30,30 +30,16 @@
 #
 
 Name:           checkstyle
-Version:        5.6
-Release:        7.1%{?dist}
+Version:        5.8
+Release:        1.1
 Summary:        Java source code checker
 URL:            http://checkstyle.sourceforge.net/
 # src/checkstyle/com/puppycrawl/tools/checkstyle/grammars/java.g is GPLv2+
 # Most of the files in contrib/usage/src/checkstyle/com/puppycrawl/tools/checkstyle/checks/usage/transmogrify/ are BSD
 License:        LGPLv2+ and GPLv2+ and BSD
-
+Group:          Development/Java
 Source0:        http://download.sf.net/checkstyle/checkstyle-%{version}-src.tar.gz
 Source2:        %{name}.catalog
-
-# Used for releases only, no use for us
-Patch0:         0001-Remove-sonatype-parent.patch
-
-# not available in Fedora yet
-Patch1:         0002-Remove-linkcheck-plugin.patch
-
-# get rid of eclipse dependency
-Patch2:         0003-Remove-eclipse-plugin.patch
-
-%if 0%{?fedora}
-%else
-Patch3:         %{name}-ftbfs.patch
-%endif
 
 BuildRequires:  java-devel >= 1:1.6.0
 BuildRequires:  antlr-maven-plugin
@@ -72,7 +58,6 @@ BuildRequires:  maven-javadoc-plugin
 BuildRequires:  maven-resources-plugin
 BuildRequires:  maven-site-plugin
 BuildRequires:  maven-surefire-plugin
-BuildRequires:  maven-surefire-provider-junit4
 
 BuildArch:      noarch
 
@@ -85,7 +70,7 @@ Obsoletes:      %{name}-manual < %{version}-%{release}
 A tool for checking Java source code for adherence to a set of rules.
 
 %package        demo
-
+Group:          Development/Tools
 Summary:        Demos for %{name}
 Requires:       %{name} = %{version}-%{release}
 
@@ -93,7 +78,7 @@ Requires:       %{name} = %{version}-%{release}
 Demonstrations and samples for %{name}.
 
 %package        javadoc
-
+Group:          Documentation
 Summary:        Javadoc for %{name}
 
 %description    javadoc
@@ -101,26 +86,31 @@ API documentation for %{name}.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%if 0%{?fedora}
-%else
-%patch3 -p1
-%endif
+
+%pom_remove_parent
+
+sed -i s/guava-jdk5/guava/ pom.xml
+
+# not needed for package build
+%pom_remove_plugin :maven-eclipse-plugin
 
 # these are only needed for upstream QA
 %pom_remove_plugin :cobertura-maven-plugin
 %pom_remove_plugin :exec-maven-plugin
+%pom_remove_plugin :maven-linkcheck-plugin
+
+# get rid of system scope
+%pom_remove_dep com.sun:tools
+%pom_add_dep com.sun:tools
 
 # fix encoding issues in docs
-sed -i 's/\r//' LICENSE LICENSE.apache20 README RIGHTS.antlr \
+sed -i 's/\r//' LICENSE LICENSE.apache20 README.md RIGHTS.antlr \
          checkstyle_checks.xml sun_checks.xml suppressions.xml \
          contrib/hooks/*.pl src/site/resources/css/*css \
          java.header
 
 # The following test needs network access, so it would fail on Koji
-rm -f src/tests/com/puppycrawl/tools/checkstyle/filters/SuppressionsLoaderTest.java
+sed -i '/testLoadFromURL/s/ *.*/    @org.junit.Ignore&/' src/test/java/com/puppycrawl/tools/checkstyle/filters/SuppressionsLoaderTest.java
 
 %build
 %mvn_file  : %{name}
@@ -135,7 +125,7 @@ rm -f src/tests/com/puppycrawl/tools/checkstyle/filters/SuppressionsLoaderTest.j
 
 # dtds
 install -Dm 644 %{SOURCE2} %{buildroot}%{_datadir}/xml/%{name}/catalog
-cp -pa src/checkstyle/com/puppycrawl/tools/checkstyle/*.dtd \
+cp -pa src/main/resources/com/puppycrawl/tools/checkstyle/*.dtd \
   %{buildroot}%{_datadir}/xml/%{name}
 
 # javadoc
@@ -151,11 +141,6 @@ install -dm 755  %{buildroot}%{_sysconfdir}/ant.d
 cat > %{buildroot}%{_sysconfdir}/ant.d/%{name} << EOF
 checkstyle antlr apache-commons-beanutils apache-commons-cli apache-commons-logging guava
 EOF
-
-%if 0%{?fedora}
-%else
-sed -i 's|<version>2.7.7</version>||' %{buildroot}%{_mavendepmapfragdir}/*
-%endif
 
 %post
 # Note that we're using a fully versioned catalog, so this is always ok.
@@ -174,7 +159,7 @@ if [ -x %{_bindir}/install-catalog -a -d %{_sysconfdir}/sgml ]; then
 fi
 
 %files -f .mfiles
-%doc LICENSE README
+%doc LICENSE README.md
 %doc checkstyle_checks.xml java.header sun_checks.xml suppressions.xml
 %{_datadir}/xml/%{name}
 %{_bindir}/%{name}
@@ -188,6 +173,25 @@ fi
 
 
 %changelog
+* Mon Oct 13 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.8-1
+- Update to upstream version 5.8
+- Skip test that requires network
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.7-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Mon May 26 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.7-2
+- Remove BuildRequires on maven-surefire-provider-junit4
+
+* Mon May 12 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 5.7-1
+- Update to upstream version 5.7
+
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.6-9
+- Use Requires: java-headless rebuild (#1067528)
+
+* Fri Jan 10 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 5.6-8
+- Fix FTBFS after ant upgrade to 1.9.2 (#1049902)
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.6-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
@@ -356,3 +360,4 @@ fi
 
 * Sun Mar 03 2002 Guillaume Rousse <guillomovitch@users.sourceforge.net> 2.1-1jpp
 - first jpp release
+
