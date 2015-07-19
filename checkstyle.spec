@@ -31,7 +31,7 @@
 
 Name:           checkstyle
 Version:        5.8
-Release:        1.1
+Release:        1.2
 Summary:        Java source code checker
 URL:            http://checkstyle.sourceforge.net/
 # src/checkstyle/com/puppycrawl/tools/checkstyle/grammars/java.g is GPLv2+
