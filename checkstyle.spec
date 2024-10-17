@@ -33,7 +33,7 @@ Name:           checkstyle
 Version:        5.8
 Release:        1.4
 Summary:        Java source code checker
-URL:            http://checkstyle.sourceforge.net/
+URL:            https://checkstyle.sourceforge.net/
 # src/checkstyle/com/puppycrawl/tools/checkstyle/grammars/java.g is GPLv2+
 # Most of the files in contrib/usage/src/checkstyle/com/puppycrawl/tools/checkstyle/checks/usage/transmogrify/ are BSD
 License:        LGPLv2+ and GPLv2+ and BSD
